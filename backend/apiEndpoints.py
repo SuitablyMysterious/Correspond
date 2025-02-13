@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from db import store_email_data  # Assuming you have a function for DB interaction
+from database.packet.db import store_email_data  # Assuming you have a function for DB interaction
 
 app = Flask(__name__)
 

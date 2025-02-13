@@ -2,13 +2,16 @@ import sqlite3
 
 DB_PATH = "database/db.sqlite"
 
+
 def get_db_connection():
+    """Create a new database connection and return it."""
     conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
+    conn.row_factory = sqlite3.Row  # To access columns by name
     return conn
 
+
 def init_db():
-    """Create database tables if they don't exist."""
+    """Create the database tables if they don't exist."""
     conn = get_db_connection()
     cursor = conn.cursor()
 
@@ -88,3 +91,17 @@ def get_conversation_emails(conversation_id):
     conn.close()
     return emails
 
+
+def store_email_data(email_data):
+    """Store incoming email data into the database."""
+    # Find or create a conversation for the email
+    conversation_id = find_existing_conversation(email_data["subject"])
+
+    if not conversation_id:
+        # If no conversation exists, create one
+        conversation_id = create_conversation(email_data["subject"])
+
+    # Insert the email into the corresponding conversation
+    insert_email(conversation_id, email_data["from"], email_data["to"], email_data["body"], email_data["is_reply"])
+
+    return {"message": "Email stored successfully!"}
